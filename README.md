@@ -4,7 +4,7 @@
 used Block state mangment
 
 ## Futures
-Search bar \n
-6 categories of news
-link to go to the real article website
+* Search bar 
+* 6 categories of news
+* link to go to the real article website
 
