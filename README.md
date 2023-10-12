@@ -1,7 +1,6 @@
 # newsapp
 
- news app using flutter contains categories /search bar and 3 pages home/list of news and article details\n
-used Block state mangment
+ news app using flutter contains categories /search bar and 3 pages home/list of news and article details.
 
 ## Futures
 * Search bar 
