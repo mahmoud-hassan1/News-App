@@ -8,16 +8,11 @@ import 'package:newsapp/screens/Home.dart';
 
 
 import '../logic/cubit/article_cubit.dart';
+import '../logic/navigation cubit/navigation_cubit.dart';
 import '../models/article.dart';
 
-class AllNewsScreen extends StatefulWidget {
-  const AllNewsScreen({Key? key}) : super(key: key);
-
-  @override
-  State<AllNewsScreen> createState() => _AllNewsScreenState();
-}
-
-class _AllNewsScreenState extends State<AllNewsScreen> {
+class AllNewsScreen extends StatelessWidget {
+  AllNewsScreen({Key? key}) : super(key: key);
   late double height;
   int selectedIndex = 0;
   bool isLoading=false;
@@ -25,87 +20,65 @@ class _AllNewsScreenState extends State<AllNewsScreen> {
  List<Article>searchedArticles=[];
   final searchTextController=TextEditingController();
   @override
-  void   initState(){
-    super.initState();
-  BlocProvider.of<ArticleCubit>(context).getallarticles("general");
 
-  }
- void switchPage(int index)async{
-    await BlocProvider.of<ArticleCubit>(context).getallarticles("general");
-    setState(() {
-      selectedIndex= index;
-    });
-   isLoading=false;
- }
-  void searchedForArticles(String title) {
-    searchedArticles= articles
-      .where((product) => product.title.toLowerCase().contains(title.toLowerCase()))
-      .toList();
-    setState(() { });
-  }
+ // void switchPage(int index)async{
+ //    await BlocProvider.of<ArticleCubit>(context).getallarticles("general");
+ //    setState(() {
+ //      selectedIndex= index;
+ //    });
+ //   isLoading=false;
+ //}
+ //  void searchedForArticles(String title) {
+ //    searchedArticles= articles
+ //      .where((product) => product.title.toLowerCase().contains(title.toLowerCase()))
+ //      .toList();
+ //  
+ //  }
 
-  Widget BuildBlocWidget(){
-    return BlocBuilder<ArticleCubit,ArticleState>(
-        builder:( context ,state){
-          if(state is GeneralLoaded  ){
-            articles=(state).articles;
-            return buildLoadedListWidget()  ;
-          }
-          else{
-            return Center(child: CircularProgressIndicator());
-          }
-        }
-    );
-  }
-Widget buildLoadedListWidget(){
 
-  return ModalProgressHUD(
-      inAsyncCall: isLoading,
-      child: selectedIndex == 1 ? ArticleList(
-      searchTextController: searchTextController,
-      searchedArticles: searchedArticles,
-      articles: articles)
-      : Home(articles: articles,
-      searchedArticles: searchedArticles,
-      searchTextController: searchTextController,
-        height: height,
-      )
-  );
-}
   @override
   Widget build(BuildContext context) {
        height=MediaQuery.of(context).size.height -    // total height
           kToolbarHeight -                      // top AppBar height
           MediaQuery.of(context).padding.top -  // top padding
           kBottomNavigationBarHeight;
-
+    return BlocConsumer<NavigationCubit, NavigationState>(
+  listener: (context, state) {
+    // TODO: implement listener
+  },
+  builder: (context, state) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home_filled),
-              label: "Home"
+              icon: Icon(
+                  Icons.home_filled,
+                color: state is HomeState? Colors.purple :
+                    Colors.grey
+              ),
+              label: "Home",
+
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
+            icon: Icon(Icons.list,
+                color: state is ArticleListState? Colors.purple :
+                Colors.grey
+            ),
             label: 'News list',
           ),
         ],
           currentIndex: selectedIndex,
         onTap:  (index){
-          articles.length==0?
-              setState((){
-                BlocProvider.of<ArticleCubit>(context).getallarticles("general");
-            selectedIndex=index;
-          }) :
-          setState(() {
-            isLoading=true;
-            switchPage(index);
-          });
-
+          selectedIndex=index;
+          index ==0?BlocProvider.of<NavigationCubit>(context).HomeChanger():
+          BlocProvider.of<NavigationCubit>(context).NewsListChanger();
         }
       ),
-      body:  BuildBlocWidget(),
+      body: state is HomeState ?
+        Home(searchTextController: searchTextController, height: height)
+      :ArticleList(searchTextController: searchTextController, searchedArticles: searchedArticles,)
+
+,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -139,12 +112,15 @@ Widget buildLoadedListWidget(){
               ),
             ),
             onChanged: (value) {
-                articles.length==0?SizedBox()
-              :searchedForArticles(value);
+              BlocProvider.of<ArticleCubit>(context).SearchArticle(value);
             },
+           autocorrect: true,
+
           ),
         ),
       ),
+    );
+    }
     );
   }
 }

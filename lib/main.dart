@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:newsapp/logic/navigation%20cubit/navigation_cubit.dart';
 import 'package:newsapp/repositroy/Article_repo.dart';
 import 'package:newsapp/screens/AllNewsScreen.dart';
 
@@ -24,8 +25,8 @@ class MyApp extends StatelessWidget {
         BlocProvider
           (create: (BuildContext context)=>
             ArticleCubit(article_repo),
-
-        )
+        ),
+        BlocProvider(create: (context) => NavigationCubit() ,)
       ],
       child: ScreenUtilInit(
         designSize: const Size(360, 690),

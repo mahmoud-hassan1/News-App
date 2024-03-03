@@ -8,22 +8,17 @@ import 'package:newsapp/screens/widgets/ArticleInListView.dart';
 import '../logic/cubit/article_cubit.dart';
 import '../models/article.dart';
 
-class ArticleList extends StatefulWidget {
-  late List<Article> articles;
+class ArticleList extends StatelessWidget {
+  List<Article> articles=[];
   List<Article> searchedArticles;
   final searchTextController;
   ArticleList({
     Key? key,
     required this.searchTextController,
     required this.searchedArticles,
-    required this.articles,
+
   }) : super(key: key);
 
-  @override
-  State<ArticleList> createState() => _ArticleListState();
-}
-
-class _ArticleListState extends State<ArticleList> {
   int selectedcategory = 0;
   List<String> category = [
     "general",
@@ -33,9 +28,26 @@ class _ArticleListState extends State<ArticleList> {
     "sports",
     "technology"
   ];
-  bool isLoading = false;
+  bool isLoading = true;
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<ArticleCubit>(context).getallarticles(category[0]);
+    return BlocConsumer<ArticleCubit, ArticleState>(
+  listener: (context, state) {
+    if(state is GeneralLoading){
+      isLoading=true;
+    }
+    else if(state is GeneralLoaded){
+      isLoading=false;
+      articles=BlocProvider.of<ArticleCubit>(context).articles;
+    }else if(state is Generalfaild){
+      isLoading=true;
+    }
+    else if(state is SearchingState){
+      searchedArticles=BlocProvider.of<ArticleCubit>(context).searchedArticles;
+    }
+  },
+  builder: (context, state) {
     return ModalProgressHUD(
       inAsyncCall: isLoading,
       child: SingleChildScrollView(
@@ -48,7 +60,6 @@ class _ArticleListState extends State<ArticleList> {
             height: 33.h,
             child: ListView.separated(
                 physics: AlwaysScrollableScrollPhysics(),
-                shrinkWrap: true,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) => Container(
                       decoration: BoxDecoration(
@@ -63,13 +74,10 @@ class _ArticleListState extends State<ArticleList> {
                       ),
                       child: ElevatedButton(
                         onPressed: () async {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          await BlocProvider.of<ArticleCubit>(context)
-                              .getallarticles(category[index]);
-                          isLoading = false;
                           selectedcategory = index;
+                           BlocProvider.of<ArticleCubit>(context)
+                              .getallarticles(category[index]);
+
                         },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
@@ -78,7 +86,11 @@ class _ArticleListState extends State<ArticleList> {
                               ? Colors.blue.shade800
                               : Colors.blue,
                         ),
-                        child: Text(category[index]),
+                        child: Text(category[index],
+                          style: TextStyle(
+                              color: Colors.white
+                          )
+                        ),
                       ),
                     ),
                 separatorBuilder: (context, index) => SizedBox(
@@ -94,15 +106,17 @@ class _ArticleListState extends State<ArticleList> {
                     height: 20.h,
                   ),
               scrollDirection: Axis.vertical,
-              itemCount: widget.searchTextController.text.isEmpty
-                  ? widget.articles.length
-                  : widget.searchedArticles.length,
+              itemCount: searchedArticles.length==0
+                  ? articles.length
+                  : searchedArticles.length,
               itemBuilder: (context, index) => ArticlInLIstView(
-                  article: widget.searchTextController.text.isEmpty
-                      ? widget.articles[index]
-                      : widget.searchedArticles[index]))
+                  article: searchedArticles.length==0
+                      ? articles[index]
+                      : searchedArticles[index]))
         ]),
       ),
     );
+  },
+);
   }
 }
