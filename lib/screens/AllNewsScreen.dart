@@ -18,7 +18,8 @@ class AllNewsScreen extends StatelessWidget {
   bool isLoading=false;
   List<Article> articles=[];
  List<Article>searchedArticles=[];
-  final searchTextController=TextEditingController();
+
+
   @override
 
  // void switchPage(int index)async{
@@ -42,32 +43,28 @@ class AllNewsScreen extends StatelessWidget {
           kToolbarHeight -                      // top AppBar height
           MediaQuery.of(context).padding.top -  // top padding
           kBottomNavigationBarHeight;
-    return BlocConsumer<NavigationCubit, NavigationState>(
-  listener: (context, state) {
-    // TODO: implement listener
-  },
+    return BlocBuilder<NavigationCubit, NavigationState>(
   builder: (context, state) {
+    final  searchTextController=BlocProvider.of<ArticleCubit>(context).searchTextController;
+      print(searchTextController.value.text);
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
               icon: Icon(
                   Icons.home_filled,
-                color: state is HomeState? Colors.purple :
-                    Colors.grey
               ),
               label: "Home",
 
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.list,
-                color: state is ArticleListState? Colors.purple :
-                Colors.grey
             ),
             label: 'News list',
           ),
         ],
           currentIndex: selectedIndex,
+        selectedItemColor:Colors.purple ,
         onTap:  (index){
           selectedIndex=index;
           index ==0?BlocProvider.of<NavigationCubit>(context).HomeChanger():
@@ -75,8 +72,8 @@ class AllNewsScreen extends StatelessWidget {
         }
       ),
       body: state is HomeState ?
-        Home(searchTextController: searchTextController, height: height)
-      :ArticleList(searchTextController: searchTextController, searchedArticles: searchedArticles,)
+        Home(height: height)
+      :ArticleList()
 
 ,
       appBar: AppBar(
@@ -114,8 +111,10 @@ class AllNewsScreen extends StatelessWidget {
             onChanged: (value) {
               BlocProvider.of<ArticleCubit>(context).SearchArticle(value);
             },
-           autocorrect: true,
-
+            onSubmitted: (value) {
+              BlocProvider.of<ArticleCubit>(context).SearchArticle(value);
+              print("ssssss");
+            },
           ),
         ),
       ),

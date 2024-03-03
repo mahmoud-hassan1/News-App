@@ -10,12 +10,12 @@ import '../models/article.dart';
 class Home extends StatelessWidget {
    List<Article> articles=[];
   List<Article> searchedArticles=[];
-  final searchTextController;
+
   double height;
 
 
   Home({Key? key,
-    required this.searchTextController,
+
     required this.height})
       : super(key: key);
 
@@ -23,6 +23,8 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isLoading = true;
     BlocProvider.of<ArticleCubit>(context).getallarticles("general");
+    searchedArticles=BlocProvider.of<ArticleCubit>(context).searchedArticles;
+    final searchTextController=BlocProvider.of<ArticleCubit>(context).searchTextController;
     return BlocConsumer<ArticleCubit, ArticleState>(
         listener: (context, state) {
       if (state is GeneralLoading) {
@@ -55,12 +57,12 @@ class Home extends StatelessWidget {
                             height: 20.h,
                           ),
                       scrollDirection: Axis.horizontal,
-                      itemCount: searchedArticles.length==0
+                      itemCount: searchTextController.text.isEmpty
                           ? articles.length
                           : searchedArticles.length,
                       itemBuilder: (context, index) =>
                           ArticleInHome(
-                              article: searchedArticles.length==0
+                              article: searchTextController.text.isEmpty
                                   ? articles[index]
                                   : searchedArticles[index]),
                     ),

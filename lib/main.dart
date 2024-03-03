@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
     Article_repo  article_repo=Article_repo(article_request:http_request() );
     ArticleCubit articleCubit=ArticleCubit(article_repo);
     return MultiBlocProvider(

@@ -10,12 +10,10 @@ import '../models/article.dart';
 
 class ArticleList extends StatelessWidget {
   List<Article> articles=[];
-  List<Article> searchedArticles;
-  final searchTextController;
+  List<Article> searchedArticles=[];
+
   ArticleList({
     Key? key,
-    required this.searchTextController,
-    required this.searchedArticles,
 
   }) : super(key: key);
 
@@ -32,6 +30,8 @@ class ArticleList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<ArticleCubit>(context).getallarticles(category[0]);
+    searchedArticles=BlocProvider.of<ArticleCubit>(context).searchedArticles;
+    final searchTextController=BlocProvider.of<ArticleCubit>(context).searchTextController;
     return BlocConsumer<ArticleCubit, ArticleState>(
   listener: (context, state) {
     if(state is GeneralLoading){
@@ -48,6 +48,7 @@ class ArticleList extends StatelessWidget {
     }
   },
   builder: (context, state) {
+
     return ModalProgressHUD(
       inAsyncCall: isLoading,
       child: SingleChildScrollView(
@@ -106,11 +107,11 @@ class ArticleList extends StatelessWidget {
                     height: 20.h,
                   ),
               scrollDirection: Axis.vertical,
-              itemCount: searchedArticles.length==0
+              itemCount: searchTextController.text.isEmpty
                   ? articles.length
                   : searchedArticles.length,
               itemBuilder: (context, index) => ArticlInLIstView(
-                  article: searchedArticles.length==0
+                  article: searchTextController.text.isEmpty
                       ? articles[index]
                       : searchedArticles[index]))
         ]),
