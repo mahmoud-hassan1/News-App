@@ -1,16 +1,9 @@
 # newsapp
 
-A new Flutter project.
+ news app using flutter contains categories /search bar and 3 pages home/list of news and article details.
 
-## Getting Started
+## Futures
+* Search bar 
+* 6 categories of news
+* link to go to the real article website
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
