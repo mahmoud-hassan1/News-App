@@ -111,10 +111,6 @@ class AllNewsScreen extends StatelessWidget {
             onChanged: (value) {
               BlocProvider.of<ArticleCubit>(context).SearchArticle(value);
             },
-            onSubmitted: (value) {
-              BlocProvider.of<ArticleCubit>(context).SearchArticle(value);
-              print("ssssss");
-            },
           ),
         ),
       ),
