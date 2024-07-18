@@ -19,13 +19,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    Article_repo  article_repo=Article_repo(article_request:http_request() );
-    ArticleCubit articleCubit=ArticleCubit(article_repo);
+    Article_repo  articleRepo=Article_repo(article_request:http_request() );
     return MultiBlocProvider(
       providers: [
         BlocProvider
           (create: (BuildContext context)=>
-            ArticleCubit(article_repo),
+            ArticleCubit(articleRepo),
         ),
         BlocProvider(create: (context) => NavigationCubit() ,)
       ],
